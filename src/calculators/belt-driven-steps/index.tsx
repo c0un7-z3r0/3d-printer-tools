@@ -1,60 +1,37 @@
-import React, { useState, ReactElement, useEffect } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import {
-  Select,
-  MenuItem,
-  Card,
-  CardContent,
-  CardHeader,
-  InputLabel,
-  FormControl,
-  TextField,
-  Collapse,
-  Button,
-  CardActions,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Divider,
-  OutlinedInput,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardHeader,
+    Collapse,
+    Divider,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TextField,
 } from '@material-ui/core';
 import { camelCase, kebabCase } from 'lodash';
 import styles from './BeltDrivenSteps.module.scss';
+import {
+    beltPitchPreset,
+    driverMicroStepsPreset,
+    IPreset,
+    motorStepAnglesPreset,
+    pulleyToothCountPreset,
+} from '../../config/presets';
+import { calculateBeltSteps } from '../../lib/calculations';
+
 const pixelWidth = require('string-pixel-width');
 
-type IPreset = {
-  description: string;
-  value: number;
-};
-
-const motorStepAnglesPreset: IPreset[] = [
-  { description: '1.8° (200 per revolution)', value: 200 },
-  { description: '0.9° (400 per revolution)', value: 400 },
-];
-
-const driverMicroStepsPreset: IPreset[] = [
-  { description: '1', value: 1 },
-  { description: '1/2', value: 2 },
-  { description: '1/4', value: 4 },
-  { description: '1/8', value: 8 },
-  { description: '1/16', value: 16 },
-  { description: '1/32', value: 32 },
-];
-
-const pulleyToothCountPreset: IPreset[] = [
-  { description: '8 teeth', value: 8 },
-  { description: '16 teeth', value: 16 },
-  { description: '20 teeth', value: 20 },
-  { description: '25 teeth', value: 25 },
-];
-
-const beltPitchPreset: IPreset[] = [
-  { description: '2mm Pitch (GT2)', value: 2 },
-  { description: '2.5mm (T2.5)', value: 2.5 },
-  { description: '3mm Pitch (GT2, HTD)', value: 3 },
-  { description: '5mm Pitch (T5, GT2, HTD)', value: 5 },
-];
 
 function renderPreset(
   presetName: string,
@@ -133,17 +110,9 @@ function BeltDrivenSteps() {
   const [calculatedResolution, setCalculatedResolution] = useState('0');
 
   useEffect(() => {
-    let newSteps = 0;
-    let newResolution = 0;
-    if (motorStepAngle && driverMicroStepping && beltPitch && pulleyToothCount) {
-      newSteps =
-        (parseFloat(motorStepAngle) * parseFloat(driverMicroStepping)) /
-        (parseFloat(beltPitch) * parseFloat(pulleyToothCount));
-      newResolution = (1 / newSteps) * 1000;
-    }
-
-    setCalculatedNewSteps(newSteps.toFixed(2));
-    setCalculatedResolution(newResolution.toFixed(2));
+      const result = calculateBeltSteps(motorStepAngle, driverMicroStepping, beltPitch, pulleyToothCount);
+      setCalculatedNewSteps(result.steps);
+      setCalculatedResolution(result.resolution);
   });
 
   return (
