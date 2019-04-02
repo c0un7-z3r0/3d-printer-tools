@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   print-calc:
@@ -7,3 +7,4 @@ services:
       - kagerer-dev-public:/app/build
 volumes:
   kagerer-dev-public:
+    name: kagerer-dev-public
