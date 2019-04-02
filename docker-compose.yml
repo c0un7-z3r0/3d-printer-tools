@@ -3,5 +3,7 @@ version: '3'
 services:
   print-calc:
     build: .
-    ports:
-      - '80:80'
+    volumes:
+      - kagerer-dev-public:/app/build
+volumes:
+  kagerer-dev-public:
